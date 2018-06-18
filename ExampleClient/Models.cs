@@ -23,6 +23,7 @@
 
 	public class Smena {
 		public int id_smena { get; set; }
+		public int id_rasp { get; set; } = -1;
 		public string start { get; set; }
 		public string end { get; set; }
 		public string date { get; set; }

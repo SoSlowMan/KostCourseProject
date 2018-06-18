@@ -263,19 +263,23 @@ namespace ExampleServer {
 		}
 	}
 
-	class addZay : APIMethod {
+	/**
+	 * Реквестует обмен сменами
+	 */
+	class AddRequestExchange : APIMethod {
+
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			SqlCommand command;
-			command = new SqlCommand("INSERT INTO [smena_ch] ([id_smena], [id_rasp]) VALUES (@smena, @rasp); SELECT SCOPE_IDENTITY();", connection);
-			command.Parameters.Add("@smena", SqlDbType.Int);
-			command.Parameters["@smena"].Value = Int32.Parse(paramz["id_smena"]);
+			SqlCommand command = new SqlCommand("INSERT INTO [smena_ch] ([id_smena], [id_rasp]) VALUES (@my_id, @desired_id); SELECT SCOPE_IDENTITY();", connection);
+			
+			command.Parameters.Add("@my_id", SqlDbType.Int);
+			command.Parameters["@my_id"].Value = Int32.Parse(paramz["id_from"]);
 
-			command.Parameters.Add("@rasp", SqlDbType.Int);
-			command.Parameters["@rasp"].Value = Int32.Parse(paramz["id_rasp"]);
+			command.Parameters.Add("@desired_id", SqlDbType.Int);
+			command.Parameters["@desired_id"].Value = Int32.Parse(paramz["id_to"]);
 
-			int idz = Convert.ToInt32(command.ExecuteScalar());
-			return idz;
+			return Convert.ToInt32(command.ExecuteScalar());
 		}
+
 	}
 
 	class getAllRasp : APIMethod {
@@ -299,21 +303,9 @@ namespace ExampleServer {
 		}
 	}
 
-	class GetAllUsers : APIUserMethod {
-		public override object Execute(APIParams paramz, SqlConnection connection) {
-			SqlDataReader reader = new SqlCommand("SELECT * FROM [workers]", connection).ExecuteReader();
-			List<Worker> items = new List<Worker>();
-
-			while (reader.Read()) {
-				items.Add(new Worker(reader));
-			}
-
-			reader.Close();
-
-			return items;
-		}
-	}
-
+	/**
+	 * Регистрирует нового пользователя
+	 */
 	class AddUser : APIMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
@@ -346,6 +338,10 @@ namespace ExampleServer {
 
 	}
 
+	/**
+	 * Стирает текущую сессию
+	 * По переданному authstr более нельзя будет совершать запросы
+	 */
 	class DropToken : APIUserMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {

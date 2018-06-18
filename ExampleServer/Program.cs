@@ -144,19 +144,25 @@ namespace ExampleServer {
 		static void createMethodsAPI() {
 			mMethods = new Dictionary<string, APIMethod> {
 				{ "SignIn", new SignIn() },
+				{ "dropToken", new DropToken() },
+
 				{ "getWorkers", new GetWorkers() },
 				{ "getSchedule", new GetSchedule() },
-				{ "GetAllSmena", new GetAllSmena() },
+
+				{ "getAllSmena", new GetAllSmena() },
 				{ "addSmena", new addSmena() },
 				{ "deleteSmena", new deleteSmena() },
+
 				{ "getOrders", new getOrders() },
 				{ "addOrder", new addOrder() },
 				{ "deleteOrder", new deleteOrder() },
-				{ "addZay", new addZay() },
+
+				{ "addRequestExchange", new AddRequestExchange() },
+
 				{ "getAllRasp", new getAllRasp() },
-				{ "getAllUsers", new GetAllUsers() },
-				{ "addUser", new AddUser() },
-				{ "dropToken", new DropToken() }
+
+				{ "getAllUsers", new GetWorkers() }, // 2 метода, но функционал ровно тот же самый. возможно, нужно слить?
+				{ "addUser", new AddUser() }
 			};
 		}
 

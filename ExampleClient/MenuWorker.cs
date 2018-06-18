@@ -18,8 +18,7 @@ namespace ExampleClient {
 		}
 
 		private void button3_Click(object sender, EventArgs e) {
-			Exchange_worker objfrm = new Exchange_worker();
-			objfrm.Show();
+			new ExchangeWorker().SetAuthData(CurrentWorker, CurrentAuthString).SetParent(this).Show();
 		}
 
 		private void MenuWorker_FormClosed(object sender, FormClosedEventArgs e) {

@@ -12,39 +12,27 @@ namespace ExampleServer {
 		}
 	}
 
-	/*public class User {
-		public int id_user { get; set; }
-		public string login { get; set; }
-		public string status { get; set; }
-
-		public User(SqlDataReader d) {
-			id_user = Int32.Parse(d["id_user"].ToString());
-			login = d["login"].ToString();
-			status = d["status"].ToString();
-		}
-
-	}*/
-
 	public class Worker {
 		public int id_worker { get; set; }
 		public string name { get; set; }
 		public string surname { get; set; }
 		public string midname { get; set; }
-        public string login { get; set; }
-        public string status { get; set; }
+		public string login { get; set; }
+		public string status { get; set; }
 
-        public Worker(SqlDataReader d) {
+		public Worker(SqlDataReader d) {
 			id_worker = Int32.Parse(d["id_worker"].ToString());
 			name = d["name"].ToString();
 			surname = d["surname"].ToString();
 			midname = d["midname"].ToString();
-            login = d["login"].ToString();
-            status = d["status"].ToString();
-        }
+			login = d["login"].ToString();
+			status = d["status"].ToString();
+		}
 	}
 
 	public class Smena {
 		public int id_smena { get; set; }
+		public int id_rasp { get; set; }
 		public string start { get; set; }
 		public string end { get; set; }
 		public string date { get; set; }
@@ -52,9 +40,10 @@ namespace ExampleServer {
 		public Smena(SqlDataReader d) {
 			try {
 				id_smena = Int32.Parse(d["id_smena"].ToString());
-			} catch (Exception e) {
-				id_smena = Int32.Parse(d["id_rasp"].ToString());
-			}
+			} catch (Exception e) { }
+			try {
+				id_rasp = Int32.Parse(d["id_rasp"].ToString());
+			} catch (Exception e) { }
 			start = d["start"].ToString();
 			end = d["end"].ToString();
 			date = DateTime.Parse(d["date"].ToString()).ToShortDateString();

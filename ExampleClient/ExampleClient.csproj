@@ -55,11 +55,11 @@
       <DependentUpon>AllWorkers.cs</DependentUpon>
     </Compile>
     <Compile Include="APIRequest.cs" />
-    <Compile Include="Exchange_worker.cs">
+    <Compile Include="ExchangeWorker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Exchange_worker.Designer.cs">
-      <DependentUpon>Exchange_worker.cs</DependentUpon>
+    <Compile Include="ExchangeWorker.Designer.cs">
+      <DependentUpon>ExchangeWorker.cs</DependentUpon>
     </Compile>
     <Compile Include="FormForAuthorizedUser.cs">
       <SubType>Form</SubType>
@@ -118,8 +118,8 @@
     <EmbeddedResource Include="AllWorkers.resx">
       <DependentUpon>AllWorkers.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Exchange_worker.resx">
-      <DependentUpon>Exchange_worker.cs</DependentUpon>
+    <EmbeddedResource Include="ExchangeWorker.resx">
+      <DependentUpon>ExchangeWorker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewOrders.resx">
       <DependentUpon>NewOrders.cs</DependentUpon>
