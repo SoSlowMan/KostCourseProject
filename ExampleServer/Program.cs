@@ -12,8 +12,8 @@ namespace ExampleServer {
 
 	class Program {
 
-        public static SqlConnection mConnection = new SqlConnection(@"Data Source=SOSLOWMAN\KOSTYA_SERVER;Initial Catalog=rasp_kurs2;Integrated Security=True");
-		//public static SqlConnection mConnection = new SqlConnection(@"Data Source=vlad805-w10\sqlexpress;Initial Catalog=dss;Integrated Security=True");
+        //public static SqlConnection mConnection = new SqlConnection(@"Data Source=SOSLOWMAN\KOSTYA_SERVER;Initial Catalog=rasp_kurs2;Integrated Security=True");
+		public static SqlConnection mConnection = new SqlConnection(@"Data Source=vlad805-w10\sqlexpress;Initial Catalog=dss;Integrated Security=True");
         
 		/**
          * Порт, который будет слушать сервер
@@ -156,7 +156,7 @@ namespace ExampleServer {
             mMethods.Add("getAllRasp", new getAllRasp());
             mMethods.Add("addUser", new addUser());
             //mMethods.Add("addauthUser", new addauthWorker());
-            mMethods.Add("dropToken", new dropToken());
+            mMethods.Add("dropToken", new DropToken());
         }
 
 		static object handleRequest(string data) {
@@ -166,9 +166,8 @@ namespace ExampleServer {
 
 			Dictionary<string, string> paramz = parseParams(split);
 
-
 			if (mMethods.ContainsKey(method)) {
-				return mMethods[method].execute(paramz, mConnection);
+				return mMethods[method].Execute(paramz, mConnection);
 			} else {
 				return null;
 			}

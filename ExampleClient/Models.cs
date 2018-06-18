@@ -8,6 +8,7 @@
 	public class LoginResult {
 		public bool isSuccess { get; set; }
 		public Worker worker { get; set; }
+		public string authstr { get; set; }
 	}
 
 	public class Worker {

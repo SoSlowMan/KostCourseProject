@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 
 namespace ExampleServer {
 
-	public class APIError {
+	public class APIError : Exception {
 		public int error = 1;
 		public string message;
 
@@ -76,6 +76,7 @@ namespace ExampleServer {
 	public class LoginResult {
 		public bool isSuccess { get; set; } = false;
 		public Worker worker { get; set; }
+		public string authstr { get; set; }
 	}
 
 	public class Order {

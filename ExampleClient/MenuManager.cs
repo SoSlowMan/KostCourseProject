@@ -8,36 +8,35 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ExampleClient
-{
-    public partial class MenuManager : Form
-    {
-        public MenuManager()
-        {
-            InitializeComponent();
-        }
+namespace ExampleClient {
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ScheduleManage objfrm = new ScheduleManage();
-            objfrm.Show();
-        }
+	public partial class MenuManager : FormForAuthorizedUser {
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            NewOrders objfrm = new NewOrders();
-            objfrm.Show();
-        }
+		public MenuManager() {
+			InitializeComponent();
+		}
 
-        private void button3_Click(object sender, EventArgs e)
-        {
+		private void button1_Click(object sender, EventArgs e) {
+			ScheduleManage objfrm = new ScheduleManage();
+			objfrm.Show();
+		}
 
-        }
+		private void button2_Click(object sender, EventArgs e) {
+			NewOrders objfrm = new NewOrders();
+			objfrm.Show();
+		}
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            allWorkers objfrm = new allWorkers();
-            objfrm.Show();
-        }
-    }
+		private void button3_Click(object sender, EventArgs e) {
+
+		}
+
+		private void button4_Click(object sender, EventArgs e) {
+			allWorkers objfrm = new allWorkers();
+			objfrm.Show();
+		}
+
+		private void MenuManager_FormClosed(object sender, FormClosedEventArgs e) {
+			OnCloseForm();
+		}
+	}
 }

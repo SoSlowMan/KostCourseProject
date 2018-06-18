@@ -2,7 +2,8 @@
 using System.Windows.Forms;
 
 namespace ExampleClient {
-	public partial class MenuWorker : Form {
+	public partial class MenuWorker : FormForAuthorizedUser {
+
 		public MenuWorker() {
 			InitializeComponent();
 		}
@@ -19,6 +20,10 @@ namespace ExampleClient {
 		private void button3_Click(object sender, EventArgs e) {
 			Exchange_worker objfrm = new Exchange_worker();
 			objfrm.Show();
+		}
+
+		private void MenuWorker_FormClosed(object sender, FormClosedEventArgs e) {
+			OnCloseForm();
 		}
 	}
 }

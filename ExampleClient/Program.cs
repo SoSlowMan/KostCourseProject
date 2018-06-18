@@ -13,7 +13,7 @@ namespace ExampleClient
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ScheduleManage());
+            Application.Run(new LoginPage());
         }
     }
 }
