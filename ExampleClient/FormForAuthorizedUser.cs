@@ -13,16 +13,18 @@ namespace ExampleClient {
 		protected Form ParentFormF = null;
 
 
-		public void SetAuthData(Worker worker, string authstr) {
+		public FormForAuthorizedUser SetAuthData(Worker worker, string authstr) {
 			this.CurrentAuthString = authstr;
 			this.CurrentWorker = worker;
+			return this;
 		}
 
 
 
-		public void SetParent(Form form) {
+		public FormForAuthorizedUser SetParent(Form form) {
 			ParentFormF = form;
 			ParentFormF.Hide();
+			return this;
 		}
 
 		protected void OnCloseForm() {

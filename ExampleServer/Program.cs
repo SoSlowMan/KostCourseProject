@@ -145,7 +145,7 @@ namespace ExampleServer {
 			mMethods = new Dictionary<string, APIMethod>();
 			mMethods.Add("SignIn", new SignIn());
             mMethods.Add("getWorkers", new GetWorkers());
-            mMethods.Add("GetSchedule", new GetSchedule());
+            mMethods.Add("getSchedule", new GetSchedule());
             mMethods.Add("GetAllSmena", new GetAllSmena());
             mMethods.Add("addSmena", new addSmena());
             mMethods.Add("deleteSmena", new deleteSmena());

@@ -20,6 +20,11 @@ namespace ExampleServer {
 
 	}
 
+	/**
+	 * Абстрактный метод API, который можно вызвать только авторизованному пользователю
+	 * То есть, в запросе обязательно должен быть параметр "authstr" к ключом, полученным
+	 * при авторизации
+	 */
 	abstract class APIUserMethod : APIMethod {
 
 		private Worker worker = null;
@@ -102,18 +107,15 @@ namespace ExampleServer {
         }
     }*/
 
+	/**
+	 * Возвращает массив работников
+	 */
 	class GetWorkers : APIUserMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			base.CheckAuth(paramz, connection);
 
-			SqlDataReader reader;
-			try {
-				reader = new SqlCommand("SELECT * FROM [workers]", connection).ExecuteReader();
-			} catch (SqlException e) {
-				return new APIError(e.ToString());
-			}
-
+			SqlDataReader reader = new SqlCommand("SELECT * FROM [workers]", connection).ExecuteReader();
 			List<Worker> workers = new List<Worker>();
 
 			while (reader.Read()) {
@@ -126,6 +128,9 @@ namespace ExampleServer {
 		}
 	}
 
+	/**
+	 * Возвращает расписание
+	 */
 	class GetSchedule : APIUserMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
@@ -133,7 +138,7 @@ namespace ExampleServer {
 
 			SqlDataReader reader;
 			try {
-				reader = new SqlCommand("SELECT [workers].[name], [workers].[surname], [workers].[midname], [rasp].[id_rasp], [rasp].[start], [rasp].[end], [rasp].[date], [rasp_work].[id_smena] FROM [workers], [rasp], [rasp_work] WHERE [workers].[id_worker] = [rasp_work].[id_worker] AND [rasp_work].[id_rasp] = [rasp].[id_rasp]", connection).ExecuteReader();
+				reader = new SqlCommand("SELECT [workers].[id_worker], [workers].[name], [workers].[surname], [workers].[midname], [workers].[login], [workers].[status], [rasp].*, [rasp_work].[id_smena] FROM [workers], [rasp], [rasp_work] WHERE [workers].[id_worker] = [rasp_work].[id_worker] AND [rasp_work].[id_rasp] = [rasp].[id_rasp]", connection).ExecuteReader();
 			} catch (SqlException e) {
 				return new APIError(e.ToString());
 			}

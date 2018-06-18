@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 
 namespace ExampleClient {
 
-	public partial class ScheduleManage : Form {
+	public partial class ScheduleManage : FormForAuthorizedUser {
+
 		public ScheduleManage() {
 			InitializeComponent();
 		}
@@ -35,7 +35,9 @@ namespace ExampleClient {
 				}
 			};
 
-			new APIRequest().makeAPIRequest("getSchedule", null, h);
+			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, h);
 		}
 
 		private void addRow(WorkShift item) {
@@ -48,18 +50,20 @@ namespace ExampleClient {
 		private void button2_Click(object sender, EventArgs e) {
 			APIRequest req = new APIRequest();
 
-			List<KeyValuePair<string, string>> parms = new List<KeyValuePair<string, string>>();
-			parms.Add(new KeyValuePair<string, string>("id_worker", add_worker.SelectedValue.ToString()));
-			parms.Add(new KeyValuePair<string, string>("date", add_date.Value.ToShortDateString()));
-			parms.Add(new KeyValuePair<string, string>("id_rasp", add_rasp.SelectedValue.ToString()));
+			List<KeyValuePair<string, string>> parms = new List<KeyValuePair<string, string>>() {
+				new KeyValuePair<string, string>("id_worker", add_worker.SelectedValue.ToString()),
+				new KeyValuePair<string, string>("date", add_date.Value.ToShortDateString()),
+				new KeyValuePair<string, string>("id_rasp", add_rasp.SelectedValue.ToString()),
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			};
 
 			onResponse<int> h = delegate (int data) {
 				updateSchedule();
 			};
 
 			req.makeAPIRequest("addSmena", parms, h);
-            showSmensInAddShiftForm();
-            }
+			showSmensInAddShiftForm();
+		}
 
 		/**
 		 * Клик по кнопке обновления
@@ -84,7 +88,9 @@ namespace ExampleClient {
 				add_worker.DisplayMember = "display";
 				add_worker.ValueMember = "value";
 			};
-			new APIRequest().makeAPIRequest("getWorkers", null, h);
+			new APIRequest().makeAPIRequest("getWorkers", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, h);
 		}
 
 		private void showSmensInAddShiftForm() {
@@ -99,7 +105,9 @@ namespace ExampleClient {
 				add_rasp.DisplayMember = "display";
 				add_rasp.ValueMember = "value";
 			};
-			new APIRequest().makeAPIRequest("GetAllSmena", null, h);
+			new APIRequest().makeAPIRequest("GetAllSmena", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, h);
 		}
 
 		private void button_delete_Click(object sender, EventArgs e) {
@@ -108,7 +116,8 @@ namespace ExampleClient {
 			}
 
 			List<KeyValuePair<string, string>> p = new List<KeyValuePair<string, string>>() {
-				new KeyValuePair<string, string>("id_smena", dgv.SelectedRows[0].Cells[0].Value.ToString())
+				new KeyValuePair<string, string>("id_smena", dgv.SelectedRows[0].Cells[0].Value.ToString()),
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
 			};
 
 			onResponse<int> handle = delegate (int data) {
@@ -118,9 +127,12 @@ namespace ExampleClient {
 			new APIRequest().makeAPIRequest("deleteSmena", p, handle);
 		}
 
-        private void button_edit_Click(object sender, EventArgs e)
-        {
+		private void button_edit_Click(object sender, EventArgs e) {
 
-        }
-    }
+		}
+
+		private void ScheduleManage_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e) {
+			OnCloseForm();
+		}
+	}
 }

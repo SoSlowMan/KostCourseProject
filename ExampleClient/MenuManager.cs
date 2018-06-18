@@ -17,8 +17,7 @@ namespace ExampleClient {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
-			ScheduleManage objfrm = new ScheduleManage();
-			objfrm.Show();
+			new ScheduleManage().SetAuthData(CurrentWorker, CurrentAuthString).SetParent(this).Show();
 		}
 
 		private void button2_Click(object sender, EventArgs e) {
