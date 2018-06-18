@@ -294,6 +294,21 @@ namespace ExampleServer {
 		}
 	}
 
+	class GetAllUsers : APIUserMethod {
+		public override object Execute(APIParams paramz, SqlConnection connection) {
+			SqlDataReader reader = new SqlCommand("SELECT * FROM [workers]", connection).ExecuteReader();
+			List<Worker> items = new List<Worker>();
+
+			while (reader.Read()) {
+				items.Add(new Worker(reader));
+			}
+
+			reader.Close();
+
+			return items;
+		}
+	}
+
 	class AddUser : APIMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {

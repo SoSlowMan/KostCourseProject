@@ -154,8 +154,8 @@ namespace ExampleServer {
 				{ "deleteOrder", new deleteOrder() },
 				{ "addZay", new addZay() },
 				{ "getAllRasp", new getAllRasp() },
+				{ "getAllUsers", new GetAllUsers() },
 				{ "addUser", new AddUser() },
-				//mMethods.Add("addauthUser", new addauthWorker());
 				{ "dropToken", new DropToken() }
 			};
 		}

@@ -75,6 +75,7 @@
 			this.Name = "AllWorkers";
 			this.Text = "allWorkers";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AllWorkers_FormClosed);
+			this.Load += new System.EventHandler(this.AllWorkers_Load);
 			((System.ComponentModel.ISupportInitialize)(this.dgv)).EndInit();
 			this.ResumeLayout(false);
 

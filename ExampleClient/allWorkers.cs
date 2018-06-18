@@ -7,11 +7,22 @@ namespace ExampleClient {
 			InitializeComponent();
 		}
 
-		private void addRow(Worker item) {
-			dgv.Rows.Add(item.name, item.surname, item.midname);
+		private void AllWorkers_Load(object sender, EventArgs e) {
+			dgv.ColumnCount = 5;
+			dgv.Columns[0].Name = "ID";
+			dgv.Columns[1].Name = "Имя";
+			dgv.Columns[2].Name = "Фамилия";
+			dgv.Columns[3].Name = "Отчество";
+			dgv.Columns[4].Name = "Логин";
+
+			UpdateUsers();
 		}
 
-		private void updateWorkers() {
+		private void addRow(Worker item) {
+			dgv.Rows.Add(item.id_worker, item.name, item.surname, item.midname, item.login);
+		}
+
+		private void UpdateUsers() {
 			onResponse<List<Worker>> h = delegate (List<Worker> data) {
 				dgv.Rows.Clear();
 				foreach (Worker item in data) {
@@ -19,7 +30,7 @@ namespace ExampleClient {
 				}
 			};
 
-			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
+			new APIRequest().makeAPIRequest("getAllUsers", new List<KeyValuePair<string, string>> {
 				new KeyValuePair<string, string>("authstr", CurrentAuthString)
 			}, h);
 		}
@@ -35,5 +46,7 @@ namespace ExampleClient {
 		private void AllWorkers_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e) {
 			OnCloseForm();
 		}
+
+		
 	}
 }
