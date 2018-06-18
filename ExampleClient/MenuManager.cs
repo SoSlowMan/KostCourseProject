@@ -21,8 +21,7 @@ namespace ExampleClient {
 		}
 
 		private void button2_Click(object sender, EventArgs e) {
-			NewOrders objfrm = new NewOrders();
-			objfrm.Show();
+			new OrdersManager().SetAuthData(CurrentWorker, CurrentAuthString).SetParent(this).Show();
 		}
 
 		private void button3_Click(object sender, EventArgs e) {

@@ -150,12 +150,12 @@ namespace ExampleServer {
 				{ "getSchedule", new GetSchedule() },
 
 				{ "getAllSmena", new GetAllSmena() },
-				{ "addSmena", new addSmena() },
-				{ "deleteSmena", new deleteSmena() },
+				{ "addSmena", new AddSmena() },
+				{ "deleteSmena", new DeleteSmena() },
 
-				{ "getOrders", new getOrders() },
-				{ "addOrder", new addOrder() },
-				{ "deleteOrder", new deleteOrder() },
+				{ "getOrders", new GetOrders() },
+				{ "addOrder", new AddOrder() },
+				{ "deleteOrder", new DeleteOrder() },
 
 				{ "addRequestExchange", new AddRequestExchange() },
 

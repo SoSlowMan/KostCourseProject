@@ -184,10 +184,10 @@ namespace ExampleServer {
 		}
 	}
 
-	class addSmena : APIUserMethod {
+	class AddSmena : APIUserMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			base.CheckAuth(paramz, connection);
+			CheckAuth(paramz, connection);
 
 			SqlCommand command;
 			command = new SqlCommand("INSERT INTO [rasp_work] ([id_worker], [id_rasp]) VALUES (@worker, @rasp); SELECT SCOPE_IDENTITY();", connection);
@@ -202,26 +202,28 @@ namespace ExampleServer {
 		}
 	}
 
-	class deleteSmena : APIMethod {
+	class DeleteSmena : APIUserMethod {
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			SqlCommand command;
-			command = new SqlCommand("DELETE FROM [rasp_work] WHERE [id_smena] = @id_smena", connection);
+			CheckAuth(paramz, connection);
+
+			SqlCommand command = new SqlCommand("DELETE FROM [rasp_work] WHERE [id_smena] = @id_smena", connection);
 			command.Parameters.Add("@id_smena", SqlDbType.Int);
 			command.Parameters["@id_smena"].Value = Int32.Parse(paramz["id_smena"]);
+
 			return command.ExecuteNonQuery();
 
 		}
 	}
 
-	class getOrders : APIMethod {
-		public override object Execute(APIParams paramz, SqlConnection connection) {
-			SqlDataReader reader;
-			try {
-				reader = new SqlCommand("SELECT * FROM [orders], [workers] WHERE [orders].[id_worker] = [workers].[id_worker]", connection).ExecuteReader();
-			} catch (SqlException e) {
-				return new APIError(e.ToString());
-			}
+	/**
+	 * Возвращает все заказы
+	 */
+	class GetOrders : APIUserMethod {
 
+		public override object Execute(APIParams paramz, SqlConnection connection) {
+			CheckAuth(paramz, connection);
+
+			SqlDataReader reader = new SqlCommand("SELECT * FROM [orders], [workers] WHERE [orders].[id_worker] = [workers].[id_worker]", connection).ExecuteReader();
 			List<OrderWithWorker> orders = new List<OrderWithWorker>();
 
 			while (reader.Read()) {
@@ -232,34 +234,43 @@ namespace ExampleServer {
 
 			return orders;
 		}
+
 	}
 
-	class addOrder : APIMethod {
+	/**
+	 * Создает заказ
+	 */
+	class AddOrder : APIUserMethod {
+
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			SqlCommand command;
-			command = new SqlCommand("INSERT INTO [orders] ([id_worker], [address], [order]) VALUES (@id_worker, @address, @order); SELECT SCOPE_IDENTITY();", connection);
+			CheckAuth(paramz, connection);
+
+			SqlCommand command = new SqlCommand("INSERT INTO [orders] ([id_worker], [address], [order]) VALUES (@id_worker, @address, @order); SELECT SCOPE_IDENTITY();", connection);
 			command.Parameters.Add("@id_worker", SqlDbType.Int);
 			command.Parameters["@id_worker"].Value = Int32.Parse(paramz["id_worker"]);
 
-			command.Parameters.Add("@order", SqlDbType.Int);
-			command.Parameters["@order"].Value = Int32.Parse(paramz["order"]);
+			command.Parameters.Add("@order", SqlDbType.VarChar);
+			command.Parameters["@order"].Value = paramz["order"];
 
-			command.Parameters.Add("@address", SqlDbType.Int);
-			command.Parameters["@address"].Value = Int32.Parse(paramz["address"]);
+			command.Parameters.Add("@address", SqlDbType.VarChar);
+			command.Parameters["@address"].Value = paramz["address"];
 
-			int id_ord = Convert.ToInt32(command.ExecuteScalar());
-			return id_ord;
+			return Convert.ToInt32(command.ExecuteScalar());
 		}
 	}
+	
+	/**
+	 * Удаляет заказ
+	 */
+	class DeleteOrder : APIUserMethod {
 
-	class deleteOrder : APIMethod {
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			SqlCommand command;
-			command = new SqlCommand("DELETE FROM [orders] WHERE [id_order] = @id_order", connection);
+			CheckAuth(paramz, connection);
+
+			SqlCommand command = new SqlCommand("DELETE FROM [orders] WHERE [id_order] = @id_order", connection);
 			command.Parameters.Add("@id_order", SqlDbType.Int);
 			command.Parameters["@id_order"].Value = Int32.Parse(paramz["id_order"]);
 			return command.ExecuteNonQuery();
-
 		}
 	}
 

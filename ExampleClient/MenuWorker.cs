@@ -13,8 +13,7 @@ namespace ExampleClient {
 		}
 
 		private void button2_Click(object sender, EventArgs e) {
-			OrdersW objfrm = new OrdersW();
-			objfrm.Show();
+			new OrdersWorker().SetAuthData(CurrentWorker, CurrentAuthString).SetParent(this).Show();
 		}
 
 		private void button3_Click(object sender, EventArgs e) {
