@@ -223,7 +223,17 @@ namespace ExampleServer {
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
 
-			SqlDataReader reader = new SqlCommand("SELECT * FROM [orders], [workers] WHERE [orders].[id_worker] = [workers].[id_worker]", connection).ExecuteReader();
+			SqlCommand cmd;
+
+			if (worker.status == "worker") {
+				cmd = new SqlCommand("SELECT * FROM [orders], [workers] WHERE [orders].[id_worker] = @id_worker AND [orders].[id_worker] = [workers].[id_worker]", connection);
+				cmd.Parameters.Add("@id_worker", SqlDbType.Int);
+				cmd.Parameters["@id_worker"].Value = worker.id_worker;
+			} else {
+				cmd = new SqlCommand("SELECT * FROM [orders], [workers] WHERE [orders].[id_worker] = [workers].[id_worker]", connection);
+			}
+
+			SqlDataReader reader = cmd.ExecuteReader();
 			List<OrderWithWorker> orders = new List<OrderWithWorker>();
 
 			while (reader.Read()) {
