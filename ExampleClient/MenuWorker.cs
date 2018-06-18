@@ -9,7 +9,7 @@ namespace ExampleClient {
 		}
 
 		private void button4_Click(object sender, EventArgs e) {
-			new RaspW().Show();
+			new ScheduleWorker().SetAuthData(CurrentWorker, CurrentAuthString).SetParent(this).Show();
 		}
 
 		private void button2_Click(object sender, EventArgs e) {

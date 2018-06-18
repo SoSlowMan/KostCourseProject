@@ -109,11 +109,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RaspW.cs">
+    <Compile Include="ScheduleWorker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RaspW.Designer.cs">
-      <DependentUpon>RaspW.cs</DependentUpon>
+    <Compile Include="ScheduleWorker.Designer.cs">
+      <DependentUpon>ScheduleWorker.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="AllWorkers.resx">
       <DependentUpon>AllWorkers.cs</DependentUpon>
@@ -151,8 +151,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="RaspW.resx">
-      <DependentUpon>RaspW.cs</DependentUpon>
+    <EmbeddedResource Include="ScheduleWorker.resx">
+      <DependentUpon>ScheduleWorker.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />

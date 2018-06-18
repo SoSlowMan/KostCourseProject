@@ -27,7 +27,7 @@ namespace ExampleServer {
 	 */
 	abstract class APIUserMethod : APIMethod {
 
-		private Worker worker = null;
+		protected Worker worker = null;
 
 		protected void CheckAuth(APIParams paramz, SqlConnection connection) {
 			if (!paramz.ContainsKey("authstr")) {
@@ -136,12 +136,17 @@ namespace ExampleServer {
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			base.CheckAuth(paramz, connection);
 
-			SqlDataReader reader;
-			try {
-				reader = new SqlCommand("SELECT [workers].[id_worker], [workers].[name], [workers].[surname], [workers].[midname], [workers].[login], [workers].[status], [rasp].*, [rasp_work].[id_smena] FROM [workers], [rasp], [rasp_work] WHERE [workers].[id_worker] = [rasp_work].[id_worker] AND [rasp_work].[id_rasp] = [rasp].[id_rasp]", connection).ExecuteReader();
-			} catch (SqlException e) {
-				return new APIError(e.ToString());
+			SqlCommand cmd;
+
+			if (!paramz.ContainsKey("onlyMe")) {
+				cmd = new SqlCommand("SELECT [workers].[id_worker], [workers].[name], [workers].[surname], [workers].[midname], [workers].[login], [workers].[status], [rasp].*, [rasp_work].[id_smena] FROM [workers], [rasp], [rasp_work] WHERE [workers].[id_worker] = [rasp_work].[id_worker] AND [rasp_work].[id_rasp] = [rasp].[id_rasp]", connection);
+			} else {
+				cmd = new SqlCommand("SELECT [workers].[id_worker], [workers].[name], [workers].[surname], [workers].[midname], [workers].[login], [workers].[status], [rasp].*, [rasp_work].[id_smena] FROM [workers], [rasp], [rasp_work] WHERE [workers].[id_worker] = [rasp_work].[id_worker] AND [rasp_work].[id_rasp] = [rasp].[id_rasp] AND [rasp_work].[id_worker] = @id_worker", connection);
+				cmd.Parameters.Add("@id_worker", SqlDbType.Int);
+				cmd.Parameters["@id_worker"].Value = worker.id_worker;
 			}
+
+			SqlDataReader reader = cmd.ExecuteReader();
 
 			List<WorkShift> items = new List<WorkShift>();
 
