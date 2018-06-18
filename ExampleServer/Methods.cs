@@ -297,6 +297,11 @@ namespace ExampleServer {
 	class AddUser : APIMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
+
+			if (paramz["password"].Length == 0 || paramz["name"].Length == 0 || paramz["surname"].Length == 0 || paramz["login"].Length == 0 || paramz["status"].Length == 0) {
+				return new APIError("не все поля указаны");
+			}
+
 			SqlCommand command = new SqlCommand("INSERT INTO [workers] ([name], [surname], [midname], [login], [password], [status]) VALUES (@name, @surname, @midname, @login, @password, @status); SELECT SCOPE_IDENTITY();", connection);
 			command.Parameters.Add("@name", SqlDbType.VarChar);
 			command.Parameters["@name"].Value = paramz["name"];
@@ -311,7 +316,7 @@ namespace ExampleServer {
 			command.Parameters["@login"].Value = paramz["login"];
 
 			command.Parameters.Add("@password", SqlDbType.VarChar);
-			command.Parameters["@password"].Value = paramz["password"];
+			command.Parameters["@password"].Value = Program.hash(paramz["password"]);
 
 			command.Parameters.Add("@status", SqlDbType.VarChar);
 			command.Parameters["@status"].Value = paramz["status"];
