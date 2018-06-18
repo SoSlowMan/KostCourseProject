@@ -142,22 +142,23 @@ namespace ExampleServer {
 		static Dictionary<string, APIMethod> mMethods;
 
 		static void createMethodsAPI() {
-			mMethods = new Dictionary<string, APIMethod>();
-			mMethods.Add("SignIn", new SignIn());
-            mMethods.Add("getWorkers", new GetWorkers());
-            mMethods.Add("getSchedule", new GetSchedule());
-            mMethods.Add("GetAllSmena", new GetAllSmena());
-            mMethods.Add("addSmena", new addSmena());
-            mMethods.Add("deleteSmena", new deleteSmena());
-            mMethods.Add("getOrders", new getOrders());
-            mMethods.Add("addOrder", new addOrder());
-            mMethods.Add("deleteOrder", new deleteOrder());
-            mMethods.Add("addZay", new addZay());
-            mMethods.Add("getAllRasp", new getAllRasp());
-            mMethods.Add("addUser", new addUser());
-            //mMethods.Add("addauthUser", new addauthWorker());
-            mMethods.Add("dropToken", new DropToken());
-        }
+			mMethods = new Dictionary<string, APIMethod> {
+				{ "SignIn", new SignIn() },
+				{ "getWorkers", new GetWorkers() },
+				{ "getSchedule", new GetSchedule() },
+				{ "GetAllSmena", new GetAllSmena() },
+				{ "addSmena", new addSmena() },
+				{ "deleteSmena", new deleteSmena() },
+				{ "getOrders", new getOrders() },
+				{ "addOrder", new addOrder() },
+				{ "deleteOrder", new deleteOrder() },
+				{ "addZay", new addZay() },
+				{ "getAllRasp", new getAllRasp() },
+				{ "addUser", new AddUser() },
+				//mMethods.Add("addauthUser", new addauthWorker());
+				{ "dropToken", new DropToken() }
+			};
+		}
 
 		static object handleRequest(string data) {
 			// Разбиваем строку, присланную клиентом на наш формат (см. клиент, там описание)

@@ -294,10 +294,10 @@ namespace ExampleServer {
 		}
 	}
 
-	class addUser : APIMethod {
+	class AddUser : APIMethod {
+
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			SqlCommand command;
-			command = new SqlCommand("INSERT INTO [workers] ([name], [surname], [midname], [login], [password], [status]) VALUES (@name, @surname, @midname, @login, @password, @status); SELECT SCOPE_IDENTITY();", connection);
+			SqlCommand command = new SqlCommand("INSERT INTO [workers] ([name], [surname], [midname], [login], [password], [status]) VALUES (@name, @surname, @midname, @login, @password, @status); SELECT SCOPE_IDENTITY();", connection);
 			command.Parameters.Add("@name", SqlDbType.VarChar);
 			command.Parameters["@name"].Value = paramz["name"];
 
@@ -316,13 +316,9 @@ namespace ExampleServer {
 			command.Parameters.Add("@status", SqlDbType.VarChar);
 			command.Parameters["@status"].Value = paramz["status"];
 
-			command = new SqlCommand("INSERT INTO [auth] ([id_worker]) VALUES (SELECT [id_worker] FROM [workers] WHERE [login]=@login); SELECT SCOPE_IDENTITY();", connection);
-			command.Parameters.Add("@worker", SqlDbType.Int);
-			command.Parameters["@worker"].Value = Int32.Parse(paramz["id_worker"]);
-
-			int id = Convert.ToInt32(command.ExecuteScalar());
-			return id;
+			return Convert.ToInt32(command.ExecuteScalar());
 		}
+
 	}
 
 	class DropToken : APIUserMethod {

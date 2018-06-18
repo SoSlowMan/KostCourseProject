@@ -30,8 +30,7 @@ namespace ExampleClient {
 		}
 
 		private void button4_Click(object sender, EventArgs e) {
-			allWorkers objfrm = new allWorkers();
-			objfrm.Show();
+			new AllWorkers().SetAuthData(CurrentWorker, CurrentAuthString).SetParent(this).Show();
 		}
 
 		private void MenuManager_FormClosed(object sender, FormClosedEventArgs e) {

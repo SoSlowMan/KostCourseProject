@@ -48,11 +48,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="allWorkers.cs">
+    <Compile Include="AllWorkers.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="allWorkers.Designer.cs">
-      <DependentUpon>allWorkers.cs</DependentUpon>
+    <Compile Include="AllWorkers.Designer.cs">
+      <DependentUpon>AllWorkers.cs</DependentUpon>
     </Compile>
     <Compile Include="APIRequest.cs" />
     <Compile Include="Exchange_worker.cs">
@@ -71,11 +71,11 @@
     <Compile Include="NewOrders.Designer.cs">
       <DependentUpon>NewOrders.cs</DependentUpon>
     </Compile>
-    <Compile Include="newUsers.cs">
+    <Compile Include="CreateUser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="newUsers.Designer.cs">
-      <DependentUpon>newUsers.cs</DependentUpon>
+    <Compile Include="CreateUser.Designer.cs">
+      <DependentUpon>CreateUser.cs</DependentUpon>
     </Compile>
     <Compile Include="ScheduleManage.cs">
       <SubType>Form</SubType>
@@ -115,8 +115,8 @@
     <Compile Include="RaspW.Designer.cs">
       <DependentUpon>RaspW.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="allWorkers.resx">
-      <DependentUpon>allWorkers.cs</DependentUpon>
+    <EmbeddedResource Include="AllWorkers.resx">
+      <DependentUpon>AllWorkers.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Exchange_worker.resx">
       <DependentUpon>Exchange_worker.cs</DependentUpon>
@@ -124,8 +124,8 @@
     <EmbeddedResource Include="NewOrders.resx">
       <DependentUpon>NewOrders.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="newUsers.resx">
-      <DependentUpon>newUsers.cs</DependentUpon>
+    <EmbeddedResource Include="CreateUser.resx">
+      <DependentUpon>CreateUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ScheduleManage.resx">
       <DependentUpon>ScheduleManage.cs</DependentUpon>
