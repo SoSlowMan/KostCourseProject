@@ -22,16 +22,14 @@ namespace ExampleClient {
 		}
 
 		private void UpdateOrders() {
-			onResponse<List<OrderWithWorker>> h = delegate (List<OrderWithWorker> data) {
+			new APIRequest().makeAPIRequest("getOrders", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<OrderWithWorker> data) {
 				dgv.Rows.Clear();
 				foreach (OrderWithWorker item in data) {
 					addRow(item);
 				}
-			};
-
-			new APIRequest().makeAPIRequest("getOrders", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void addRow(OrderWithWorker item) {
@@ -39,7 +37,9 @@ namespace ExampleClient {
 		}
 
 		private void ShowWorkersInAddOrderForm() {
-			onResponse<List<Worker>> h = delegate (List<Worker> items) {
+			new APIRequest().makeAPIRequest("getWorkers", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<Worker> items) {
 				List<ComboItem> src = new List<ComboItem>();
 
 				foreach (Worker w in items) {
@@ -49,11 +49,7 @@ namespace ExampleClient {
 				add_worker.DataSource = src;
 				add_worker.DisplayMember = "display";
 				add_worker.ValueMember = "value";
-			};
-
-			new APIRequest().makeAPIRequest("getWorkers", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void button_update_Click(object sender, EventArgs e) {
@@ -69,27 +65,23 @@ namespace ExampleClient {
 				return;
 			}
 
-			onResponse<int> handle = delegate (int data) {
-				UpdateOrders();
-			};
-
 			new APIRequest().makeAPIRequest("deleteOrder", new List<KeyValuePair<string, string>>() {
 				new KeyValuePair<string, string>("id_order", dgv.SelectedRows[0].Cells[0].Value.ToString()),
 				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, handle);
+			}, delegate (int data) {
+				UpdateOrders();
+			});
 		}
 
 		private void button_add_Click(object sender, EventArgs e) {
-			onResponse<int> h = delegate (int data) {
-				UpdateOrders();
-			};
-
 			new APIRequest().makeAPIRequest("addOrder", new List<KeyValuePair<string, string>> {
 				new KeyValuePair<string, string>("id_worker", add_worker.SelectedValue.ToString()),
 				new KeyValuePair<string, string>("address", textBox1.Text.ToString()),
 				new KeyValuePair<string, string>("order", textBox2.Text.ToString()),
 				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			}, delegate (int data) {
+				UpdateOrders();
+			});
 		}
 
 		private void NewOrders_FormClosed(object sender, FormClosedEventArgs e) {

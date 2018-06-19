@@ -28,16 +28,14 @@ namespace ExampleClient {
 		 * Обновление раписания
 		 */
 		private void updateSchedule() {
-			onResponse<List<WorkShift>> h = delegate (List<WorkShift> data) {
+			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<WorkShift> data) {
 				dgv.Rows.Clear();
 				foreach (WorkShift item in data) {
 					addRow(item);
 				}
-			};
-
-			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void addRow(WorkShift item) {
@@ -48,20 +46,14 @@ namespace ExampleClient {
 		 * Клик по кнопке добавления
 		 */
 		private void button2_Click(object sender, EventArgs e) {
-			APIRequest req = new APIRequest();
-
-			List<KeyValuePair<string, string>> parms = new List<KeyValuePair<string, string>>() {
+			new APIRequest().makeAPIRequest("addSmena", new List<KeyValuePair<string, string>>() {
 				new KeyValuePair<string, string>("id_worker", add_worker.SelectedValue.ToString()),
 				new KeyValuePair<string, string>("date", add_date.Value.ToShortDateString()),
 				new KeyValuePair<string, string>("id_rasp", add_rasp.SelectedValue.ToString()),
 				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			};
-
-			onResponse<int> h = delegate (int data) {
+			}, delegate (int data) {
 				updateSchedule();
-			};
-
-			req.makeAPIRequest("addSmena", parms, h);
+			});
 			showSmensInAddShiftForm();
 		}
 
@@ -77,37 +69,33 @@ namespace ExampleClient {
 		}
 
 		private void showWorkersInAddShiftForm() {
-			onResponse<List<Worker>> h = delegate (List<Worker> items) {
+			new APIRequest().makeAPIRequest("getWorkers", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<Worker> items) {
 				List<ComboItem> src = new List<ComboItem>();
-
 				foreach (Worker w in items) {
 					src.Add(new ComboItem(w.name + " " + w.surname + " " + w.midname, w.id_worker));
 				}
-
 				add_worker.DataSource = src;
 				add_worker.DisplayMember = "display";
 				add_worker.ValueMember = "value";
-			};
-			new APIRequest().makeAPIRequest("getWorkers", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void showSmensInAddShiftForm() {
-			onResponse<List<Smena>> h = delegate (List<Smena> items) {
+			new APIRequest().makeAPIRequest("getAllSmena", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<Smena> items) {
 				List<ComboItem> src = new List<ComboItem>();
 
 				foreach (Smena w in items) {
-					src.Add(new ComboItem(w.start + "-" + w.end + ":" + w.date, w.id_smena));
+					src.Add(new ComboItem(w.start + "-" + w.end + ":" + w.date, w.id_rasp));
 				}
 
 				add_rasp.DataSource = src;
 				add_rasp.DisplayMember = "display";
 				add_rasp.ValueMember = "value";
-			};
-			new APIRequest().makeAPIRequest("getAllSmena", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void button_delete_Click(object sender, EventArgs e) {
@@ -115,14 +103,16 @@ namespace ExampleClient {
 				return;
 			}
 
-			onResponse<int> handle = delegate (int data) {
-				updateSchedule();
-			};
+			if (dgv.SelectedRows[0].Cells[0].Value == null) {
+				return;
+			}
 
 			new APIRequest().makeAPIRequest("deleteSmena", new List<KeyValuePair<string, string>>() {
 				new KeyValuePair<string, string>("id_smena", dgv.SelectedRows[0].Cells[0].Value.ToString()),
 				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, handle);
+			}, delegate (int data) {
+				updateSchedule();
+			});
 		}
 
 		private void button_edit_Click(object sender, EventArgs e) {

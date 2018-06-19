@@ -21,36 +21,31 @@ namespace ExampleClient {
 		}
 
 		private void UpdateSchedule() {
-			onResponse<List<WorkShift>> h = delegate (List<WorkShift> data) {
+			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<WorkShift> data) {
 				dgv.Rows.Clear();
 				foreach (WorkShift item in data) {
 					addRow(item);
 				}
-			};
-
-			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void MySchedule() {
-			onResponse<List<WorkShift>> h = delegate (List<WorkShift> data) {
+			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("onlyMe", "1"),
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<WorkShift> data) {
 				dgv.Rows.Clear();
 				foreach (WorkShift myitem in data) {
 					addRow(myitem);
 				}
-			};
-
-			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("onlyMe", "1"),
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void addRow(WorkShift item) {
 			dgv.Rows.Add(item.smena.id_smena, item.worker.name, item.worker.surname, item.worker.midname, item.smena.start + "-" + item.smena.end, item.smena.date);
 		}
-
 
 		private void dgv_CellContentClick(object sender, DataGridViewCellEventArgs e) {
 

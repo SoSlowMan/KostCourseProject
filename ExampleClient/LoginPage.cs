@@ -12,13 +12,10 @@ namespace ExampleClient {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
-			List<KeyValuePair<string, string>> parms = new List<KeyValuePair<string, string>> {
+			new APIRequest().makeAPIRequest("SignIn", new List<KeyValuePair<string, string>> {
 				new KeyValuePair<string, string>("login", textBox1.Text.Trim()),
 				new KeyValuePair<string, string>("password", textBox2.Text.Trim())
-			};
-
-			// Получили ответ от API
-			onResponse<LoginResult> h = delegate (LoginResult data) {
+			}, delegate (LoginResult data) {
 
 				// Если авторизация успешна
 				if (data.isSuccess) {
@@ -47,9 +44,7 @@ namespace ExampleClient {
 				} else {
 					MessageBox.Show("Проверьте логин или пароль");
 				}
-			};
-
-			new APIRequest().makeAPIRequest("SignIn", parms, h);
+			});
 		}
 	}
 }

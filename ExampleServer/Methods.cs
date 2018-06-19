@@ -29,7 +29,7 @@ namespace ExampleServer {
 
 		protected Worker worker = null;
 
-		protected void CheckAuth(APIParams paramz, SqlConnection connection) {
+		protected virtual void CheckAuth(APIParams paramz, SqlConnection connection) {
 			if (!paramz.ContainsKey("authstr")) {
 				throw new APIError("no authstr passed");
 			}
@@ -48,6 +48,28 @@ namespace ExampleServer {
 			reader.Close();
 		}
 
+	}
+
+	abstract class APIWorkerMethod : APIUserMethod {
+
+		protected override void CheckAuth(APIParams paramz, SqlConnection connection) {
+			base.CheckAuth(paramz, connection);
+
+			if (worker.status != "worker") {
+				throw new APIError("this is worker method");
+			}
+		}
+	}
+
+	abstract class APIManagerMethod : APIUserMethod {
+
+		protected override void CheckAuth(APIParams paramz, SqlConnection connection) {
+			base.CheckAuth(paramz, connection);
+
+			if (worker.status != "manager") {
+				throw new APIError("this is manager method");
+			}
+		}
 	}
 
 	/**
@@ -93,27 +115,13 @@ namespace ExampleServer {
 
 	}
 
-	/*class addauthWorker : APIMethod
-    {
-        public override object execute(APIParams paramz, SqlConnection connection)
-        {
-            SqlCommand command;
-            command = new SqlCommand("INSERT INTO [auth] ([id_worker]) VALUES (SELECT [id_worker] FROM [workers] WHERE ); SELECT SCOPE_IDENTITY();", connection);
-            command.Parameters.Add("@worker", SqlDbType.Int);
-            command.Parameters["@worker"].Value = Int32.Parse(paramz["id_worker"]);
-
-            int id = Convert.ToInt32(command.ExecuteScalar());
-            return id;
-        }
-    }*/
-
 	/**
 	 * Возвращает массив работников
 	 */
-	class GetWorkers : APIUserMethod {
+	class GetWorkers : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			base.CheckAuth(paramz, connection);
+			CheckAuth(paramz, connection);
 
 			SqlDataReader reader = new SqlCommand("SELECT * FROM [workers]", connection).ExecuteReader();
 			List<Worker> workers = new List<Worker>();
@@ -134,7 +142,7 @@ namespace ExampleServer {
 	class GetSchedule : APIUserMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			base.CheckAuth(paramz, connection);
+			CheckAuth(paramz, connection);
 
 			SqlCommand cmd;
 
@@ -160,10 +168,10 @@ namespace ExampleServer {
 		}
 	}
 
-	class GetAllSmena : APIUserMethod {
+	class GetAllSmena : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
-			base.CheckAuth(paramz, connection);
+			CheckAuth(paramz, connection);
 
 			SqlDataReader reader;
 			try {
@@ -184,25 +192,23 @@ namespace ExampleServer {
 		}
 	}
 
-	class AddSmena : APIUserMethod {
+	class AddSmena : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
 
-			SqlCommand command;
-			command = new SqlCommand("INSERT INTO [rasp_work] ([id_worker], [id_rasp]) VALUES (@worker, @rasp); SELECT SCOPE_IDENTITY();", connection);
+			SqlCommand command  = new SqlCommand("INSERT INTO [rasp_work] ([id_worker], [id_rasp]) VALUES (@worker, @rasp); SELECT SCOPE_IDENTITY();", connection);
 			command.Parameters.Add("@worker", SqlDbType.Int);
 			command.Parameters["@worker"].Value = Int32.Parse(paramz["id_worker"]);
 
 			command.Parameters.Add("@rasp", SqlDbType.Int);
 			command.Parameters["@rasp"].Value = Int32.Parse(paramz["id_rasp"]);
 
-			int id = Convert.ToInt32(command.ExecuteScalar());
-			return id;
+			return Convert.ToInt32(command.ExecuteScalar());
 		}
 	}
 
-	class DeleteSmena : APIUserMethod {
+	class DeleteSmena : APIManagerMethod {
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
 
@@ -250,7 +256,7 @@ namespace ExampleServer {
 	/**
 	 * Создает заказ
 	 */
-	class AddOrder : APIUserMethod {
+	class AddOrder : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
@@ -272,7 +278,7 @@ namespace ExampleServer {
 	/**
 	 * Удаляет заказ
 	 */
-	class DeleteOrder : APIUserMethod {
+	class DeleteOrder : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
@@ -287,7 +293,7 @@ namespace ExampleServer {
 	/**
 	 * Реквестует обмен сменами
 	 */
-	class AddRequestExchange : APIUserMethod {
+	class AddRequestExchange : APIWorkerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
@@ -308,7 +314,7 @@ namespace ExampleServer {
 	/**
 	 * Выборка заявок на обмен сменами
 	 */
-	class GetRequestsExchange : APIUserMethod {
+	class GetRequestsExchange : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
@@ -327,7 +333,7 @@ namespace ExampleServer {
 		}
 	}
 
-	class AcceptRequestExchange : APIUserMethod {
+	class AcceptRequestExchange : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
@@ -378,7 +384,7 @@ namespace ExampleServer {
 
 	}
 
-	class RejectRequestExchange : APIUserMethod {
+	class RejectRequestExchange : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
@@ -392,17 +398,12 @@ namespace ExampleServer {
 
 	}
 
+	// Он вообще нужен? Не нашел использования на клиенте
 	class GetAllRasp : APIUserMethod {
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);
 
-			SqlDataReader reader;
-			try {
-				reader = new SqlCommand("SELECT [rasp].* FROM [workers], [rasp], [rasp_work], [auth] WHERE [workers].[id_worker] = [rasp_work].[id_worker] AND [rasp_work].[id_rasp] = [rasp].[id_rasp] AND [workers].[id_worker] = [auth].[id_worker]", connection).ExecuteReader();
-			} catch (SqlException e) {
-				return new APIError(e.ToString());
-			}
-
+			SqlDataReader reader = new SqlCommand("SELECT [rasp].* FROM [workers], [rasp], [rasp_work], [auth] WHERE [workers].[id_worker] = [rasp_work].[id_worker] AND [rasp_work].[id_rasp] = [rasp].[id_rasp] AND [workers].[id_worker] = [auth].[id_worker]", connection).ExecuteReader();
 			List<Smena> rasps = new List<Smena>();
 
 			while (reader.Read()) {
@@ -418,7 +419,7 @@ namespace ExampleServer {
 	/**
 	 * Регистрирует нового пользователя
 	 */
-	class AddUser : APIUserMethod {
+	class AddUser : APIManagerMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
 			CheckAuth(paramz, connection);

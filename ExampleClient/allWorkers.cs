@@ -23,16 +23,14 @@ namespace ExampleClient {
 		}
 
 		private void UpdateUsers() {
-			onResponse<List<Worker>> h = delegate (List<Worker> data) {
+			new APIRequest().makeAPIRequest("getAllUsers", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<Worker> data) {
 				dgv.Rows.Clear();
 				foreach (Worker item in data) {
 					addRow(item);
 				}
-			};
-
-			new APIRequest().makeAPIRequest("getAllUsers", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
@@ -46,7 +44,5 @@ namespace ExampleClient {
 		private void AllWorkers_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e) {
 			OnCloseForm();
 		}
-
-		
 	}
 }

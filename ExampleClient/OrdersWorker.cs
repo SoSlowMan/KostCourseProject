@@ -23,16 +23,14 @@ namespace ExampleClient {
 		}
 
 		private void UpdateOrders() {
-			onResponse<List<OrderWithWorker>> h = delegate (List<OrderWithWorker> data) {
+			new APIRequest().makeAPIRequest("getOrders", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<OrderWithWorker> data) {
 				dgv.Rows.Clear();
 				foreach (OrderWithWorker item in data) {
 					addRow(item);
 				}
-			};
-
-			new APIRequest().makeAPIRequest("getOrders", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void addRow(OrderWithWorker item) {

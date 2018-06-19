@@ -20,7 +20,9 @@ namespace ExampleClient {
 		}
 
 		private void RequestAllList() {
-			onResponse<List<WorkShift>> h = delegate (List<WorkShift> items) {
+			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, delegate (List<WorkShift> items) {
 				List<ComboItem> otherSmenas = new List<ComboItem>(); // source
 				List<ComboItem> mySmenas = new List<ComboItem>(); // target
 
@@ -41,22 +43,17 @@ namespace ExampleClient {
 				mySmenasCombo.DataSource = mySmenas;
 				mySmenasCombo.DisplayMember = "display";
 				mySmenasCombo.ValueMember = "value";
-			};
-			new APIRequest().makeAPIRequest("getSchedule", new List<KeyValuePair<string, string>> {
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			});
 		}
 
 		private void OnFormSubmit(object sender, EventArgs e) {
-			onResponse<int> h = delegate (int data) {
-				MessageBox.Show("Обмен запрошен");
-			};
-
 			new APIRequest().makeAPIRequest("addRequestExchange", new List<KeyValuePair<string, string>> {
 				new KeyValuePair<string, string>("id_from", mySmenasCombo.SelectedValue.ToString()),
 				new KeyValuePair<string, string>("id_to", variantsCombo.SelectedValue.ToString()),
 				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			}, h);
+			}, delegate (int data) {
+				MessageBox.Show("Обмен запрошен");
+			});
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e) {
