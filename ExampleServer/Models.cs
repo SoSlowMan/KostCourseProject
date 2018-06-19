@@ -20,13 +20,15 @@ namespace ExampleServer {
 		public string login { get; set; }
 		public string status { get; set; }
 
-		public Worker(SqlDataReader d) {
-			id_worker = Int32.Parse(d["id_worker"].ToString());
-			name = d["name"].ToString();
-			surname = d["surname"].ToString();
-			midname = d["midname"].ToString();
-			login = d["login"].ToString();
-			status = d["status"].ToString();
+		public Worker(SqlDataReader d) : this(d, "") {}
+
+		public Worker(SqlDataReader d, string prefix) {
+			id_worker = Int32.Parse(d[prefix + "id_worker"].ToString());
+			name = d[prefix + "name"].ToString();
+			surname = d[prefix + "surname"].ToString();
+			midname = d[prefix + "midname"].ToString();
+			login = d[prefix + "login"].ToString();
+			status = d[prefix + "status"].ToString();
 		}
 	}
 
@@ -37,16 +39,18 @@ namespace ExampleServer {
 		public string end { get; set; }
 		public string date { get; set; }
 
-		public Smena(SqlDataReader d) {
+		public Smena(SqlDataReader d) : this(d, "") {}
+
+		public Smena(SqlDataReader d, string prefix) {
 			try {
-				id_smena = Int32.Parse(d["id_smena"].ToString());
-			} catch (Exception e) { }
+				id_smena = Int32.Parse(d[prefix + "id_smena"].ToString());
+			} catch (Exception) { }
 			try {
-				id_rasp = Int32.Parse(d["id_rasp"].ToString());
-			} catch (Exception e) { }
-			start = d["start"].ToString();
-			end = d["end"].ToString();
-			date = DateTime.Parse(d["date"].ToString()).ToShortDateString();
+				id_rasp = Int32.Parse(d[prefix + "id_rasp"].ToString());
+			} catch (Exception) { }
+			start = d[prefix + "start"].ToString();
+			end = d[prefix + "end"].ToString();
+			date = DateTime.Parse(d[prefix + "date"].ToString()).ToShortDateString();
 		}
 	}
 
@@ -55,9 +59,11 @@ namespace ExampleServer {
 		public Worker worker;
 		public Smena smena;
 
-		public WorkShift(SqlDataReader d) {
-			worker = new Worker(d);
-			smena = new Smena(d);
+		public WorkShift(SqlDataReader d) : this(d, "") {}
+
+		public WorkShift(SqlDataReader d, string prefix) {
+			worker = new Worker(d, prefix);
+			smena = new Smena(d, prefix);
 		}
 
 	}
@@ -73,12 +79,14 @@ namespace ExampleServer {
 		public int id_worker { get; set; }
 		public string order { get; set; }
 		public string address { get; set; }
+		public string date { get; set; }
 
 		public Order(SqlDataReader d) {
 			id_order = Int32.Parse(d["id_order"].ToString());
 			id_worker = Int32.Parse(d["id_worker"].ToString());
 			order = d["order"].ToString();
 			address = d["address"].ToString();
+			date = d["date"].ToString();
 		}
 	}
 
@@ -89,6 +97,19 @@ namespace ExampleServer {
 		public OrderWithWorker(SqlDataReader d) {
 			order = new Order(d);
 			worker = new Worker(d);
+		}
+	}
+
+	public class ExchangeRequest {
+
+		public int id_request { get; set; }
+		public WorkShift current { get; set; }
+		public WorkShift desired { get; set; }
+
+		public ExchangeRequest(SqlDataReader d) {
+			id_request = Convert.ToInt32(d["id_zay"].ToString());
+			current = new WorkShift(d, "cur_");
+			desired = new WorkShift(d, "des_");
 		}
 	}
 }

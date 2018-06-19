@@ -158,8 +158,11 @@ namespace ExampleServer {
 				{ "deleteOrder", new DeleteOrder() },
 
 				{ "addRequestExchange", new AddRequestExchange() },
+				{ "getRequestsExchange", new GetRequestsExchange() },
+				{ "acceptRequest", new AcceptRequestExchange() },
+				{ "rejectRequest", new RejectRequestExchange() },
 
-				{ "getAllRasp", new getAllRasp() },
+				{ "getAllRasp", new GetAllRasp() },
 
 				{ "getAllUsers", new GetWorkers() }, // 2 метода, но функционал ровно тот же самый. возможно, нужно слить?
 				{ "addUser", new AddUser() }

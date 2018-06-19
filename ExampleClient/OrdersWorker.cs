@@ -13,10 +13,11 @@ namespace ExampleClient {
 		}
 
 		private void OrdersW_Load(object sender, EventArgs e) {
-			dgv.ColumnCount = 3;
+			dgv.ColumnCount = 4;
 			dgv.Columns[0].Name = "ID";
 			dgv.Columns[1].Name = "Описание";
 			dgv.Columns[2].Name = "Адрес";
+			dgv.Columns[3].Name = "Дата";
 
 			UpdateOrders();
 		}
@@ -35,7 +36,7 @@ namespace ExampleClient {
 		}
 
 		private void addRow(OrderWithWorker item) {
-			dgv.Rows.Add(item.order.id_order, item.order.order, item.order.address);
+			dgv.Rows.Add(item.order.id_order, item.order.order, item.order.address, item.order.date);
 		}
 
 		private void OrdersW_FormClosed(object sender, FormClosedEventArgs e) {

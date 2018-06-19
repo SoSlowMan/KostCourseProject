@@ -25,7 +25,7 @@ namespace ExampleClient {
 		}
 
 		private void button3_Click(object sender, EventArgs e) {
-            //new ExchangeManager().SetAuthData(CurrentWorker, CurrentAuthString).SetParent(this).Show();
+            new ExchangeManager().SetAuthData(CurrentWorker, CurrentAuthString).SetParent(this).Show();
         }
 
 		private void button4_Click(object sender, EventArgs e) {

@@ -105,7 +105,7 @@ namespace ExampleClient {
 				add_rasp.DisplayMember = "display";
 				add_rasp.ValueMember = "value";
 			};
-			new APIRequest().makeAPIRequest("GetAllSmena", new List<KeyValuePair<string, string>> {
+			new APIRequest().makeAPIRequest("getAllSmena", new List<KeyValuePair<string, string>> {
 				new KeyValuePair<string, string>("authstr", CurrentAuthString)
 			}, h);
 		}
@@ -115,16 +115,14 @@ namespace ExampleClient {
 				return;
 			}
 
-			List<KeyValuePair<string, string>> p = new List<KeyValuePair<string, string>>() {
-				new KeyValuePair<string, string>("id_smena", dgv.SelectedRows[0].Cells[0].Value.ToString()),
-				new KeyValuePair<string, string>("authstr", CurrentAuthString)
-			};
-
 			onResponse<int> handle = delegate (int data) {
 				updateSchedule();
 			};
 
-			new APIRequest().makeAPIRequest("deleteSmena", p, handle);
+			new APIRequest().makeAPIRequest("deleteSmena", new List<KeyValuePair<string, string>>() {
+				new KeyValuePair<string, string>("id_smena", dgv.SelectedRows[0].Cells[0].Value.ToString()),
+				new KeyValuePair<string, string>("authstr", CurrentAuthString)
+			}, handle);
 		}
 
 		private void button_edit_Click(object sender, EventArgs e) {

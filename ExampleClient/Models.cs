@@ -43,11 +43,18 @@
 		public int id_worker { get; set; }
 		public string order { get; set; }
 		public string address { get; set; }
+		public string date { get; set; }
 	}
 
 	public class OrderWithWorker {
 		public Order order;
 		public Worker worker;
+	}
+
+	public class ExchangeRequest {
+		public int id_request { get; set; }
+		public WorkShift current { get; set; }
+		public WorkShift desired { get; set; }
 	}
 
 	public class ComboItem {

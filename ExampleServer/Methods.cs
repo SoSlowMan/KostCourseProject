@@ -287,9 +287,11 @@ namespace ExampleServer {
 	/**
 	 * Реквестует обмен сменами
 	 */
-	class AddRequestExchange : APIMethod {
+	class AddRequestExchange : APIUserMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
+			CheckAuth(paramz, connection);
+
 			SqlCommand command = new SqlCommand("INSERT INTO [smena_ch] ([id_smena], [id_rasp]) VALUES (@my_id, @desired_id); SELECT SCOPE_IDENTITY();", connection);
 			
 			command.Parameters.Add("@my_id", SqlDbType.Int);
@@ -303,8 +305,97 @@ namespace ExampleServer {
 
 	}
 
-	class getAllRasp : APIMethod {
+	/**
+	 * Выборка заявок на обмен сменами
+	 */
+	class GetRequestsExchange : APIUserMethod {
+
 		public override object Execute(APIParams paramz, SqlConnection connection) {
+			CheckAuth(paramz, connection);
+
+			SqlDataReader reader = new SqlCommand("SELECT [s].[id_zay], [rwm].[id_rasp] AS [cur_id_rasp], [rwm].[id_smena] AS [cur_id_smena], [rwd].[id_rasp] AS [des_id_rasp], [rwd].[id_smena] AS [des_id_smena], [wc].[id_worker] AS [cur_id_worker], [wc].[name] AS [cur_name], [wc].[surname] AS [cur_surname], [wc].[midname] AS [cur_midname], [wc].[login] AS [cur_login], [wc].[status] AS [cur_status], [wf].[id_worker] AS [des_id_worker], [wf].[name] AS [des_name], [wf].[surname] AS [des_surname], [wf].[midname] AS [des_midname], [wf].[login] AS [des_login], [wf].[status] AS [des_status], [rc].[date] AS [cur_date], [rc].[start] AS [cur_start], [rc].[end] AS [cur_end], [rf].[date] AS [des_date], [rf].[start] AS [des_start], [rf].[end] AS [des_end] FROM [dbo].[smena_ch] [s], [dbo].[rasp_work] [rwm], [dbo].[rasp_work] [rwd], [dbo].[workers] [wc], [dbo].[workers] [wf], [dbo].[rasp] [rc], [dbo].[rasp] [rf] WHERE [s].[id_smena] = [rwm].[id_smena] AND [rwm].[id_worker] = [wc].[id_worker] AND [rwm].[id_rasp] = [rc].[id_rasp] AND [s].[id_rasp] = [rwd].[id_smena] AND [rwd].[id_worker] = [wf].[id_worker] AND [rwd].[id_rasp] = [rf].[id_rasp]", connection).ExecuteReader();
+
+			List<ExchangeRequest> items = new List<ExchangeRequest>();
+
+			while (reader.Read()) {
+				items.Add(new ExchangeRequest(reader));
+			}
+
+			reader.Close();
+
+			return items;
+		}
+	}
+
+	class AcceptRequestExchange : APIUserMethod {
+
+		public override object Execute(APIParams paramz, SqlConnection connection) {
+			CheckAuth(paramz, connection);
+
+			SqlCommand cmd = new SqlCommand("SELECT	[rwm].[id_worker] AS [ciw], [rwm].[id_smena] AS[cis], [rwd].[id_worker] AS[diw], [rwd].[id_smena] AS[dis] FROM [dbo].[smena_ch] [s], [dbo].[rasp_work] [rwm], [dbo].[rasp_work] [rwd] WHERE [s].[id_smena] = [rwm].[id_smena] AND [s].[id_rasp] = [rwd].[id_smena] AND [s].[id_zay] = @id_request", connection);
+			cmd.Parameters.Add("@id_request", SqlDbType.Int);
+			cmd.Parameters["@id_request"].Value = Convert.ToInt32(paramz["id_request"]);
+
+			SqlDataReader reader = cmd.ExecuteReader();
+
+			if (reader.Read()) {
+				int currentWorker = Convert.ToInt32(reader["ciw"]);
+				int current = Convert.ToInt32(reader["cis"]);
+				int desiredWorker = Convert.ToInt32(reader["diw"]);
+				int desired = Convert.ToInt32(reader["dis"]);
+
+				reader.Close();
+
+				string sql = "UPDATE [rasp_work] SET [id_worker] = @id_worker WHERE [id_smena] = @id_smena";
+
+				// Тот, кто хотел другую смену, получает ее
+				cmd = new SqlCommand(sql, connection);
+				cmd.Parameters.Add("@id_worker", SqlDbType.Int);
+				cmd.Parameters["@id_worker"].Value = desiredWorker;
+				cmd.Parameters.Add("@id_smena", SqlDbType.Int);
+				cmd.Parameters["@id_smena"].Value = current;
+				cmd.ExecuteNonQuery();
+
+				// Тот, кто был на желаемой смене, получает смену, которая была у того, кто хотел эту
+				cmd = new SqlCommand(sql, connection);
+				cmd.Parameters.Add("@id_worker", SqlDbType.Int);
+				cmd.Parameters["@id_worker"].Value = currentWorker;
+				cmd.Parameters.Add("@id_smena", SqlDbType.Int);
+				cmd.Parameters["@id_smena"].Value = desired;
+				cmd.ExecuteNonQuery();
+			} else {
+				reader.Close();
+				return new APIError("specified request not found");
+			}
+
+			// Удаляем заявку
+			cmd = new SqlCommand("DELETE FROM [smena_ch] WHERE [id_zay] = @id_request", connection);
+			cmd.Parameters.Add("@id_request", SqlDbType.Int);
+			cmd.Parameters["@id_request"].Value = Convert.ToInt32(paramz["id_request"]);
+
+			return cmd.ExecuteNonQuery() > 0;
+		}
+
+	}
+
+	class RejectRequestExchange : APIUserMethod {
+
+		public override object Execute(APIParams paramz, SqlConnection connection) {
+			CheckAuth(paramz, connection);
+
+			SqlCommand cmd = new SqlCommand("DELETE FROM [smena_ch] WHERE [id_zay] = @id_request", connection);
+			cmd.Parameters.Add("@id_request", SqlDbType.Int);
+			cmd.Parameters["@id_request"].Value = Convert.ToInt32(paramz["id_request"]);
+
+			return cmd.ExecuteNonQuery() > 0;
+		}
+
+	}
+
+	class GetAllRasp : APIUserMethod {
+		public override object Execute(APIParams paramz, SqlConnection connection) {
+			CheckAuth(paramz, connection);
+
 			SqlDataReader reader;
 			try {
 				reader = new SqlCommand("SELECT [rasp].* FROM [workers], [rasp], [rasp_work], [auth] WHERE [workers].[id_worker] = [rasp_work].[id_worker] AND [rasp_work].[id_rasp] = [rasp].[id_rasp] AND [workers].[id_worker] = [auth].[id_worker]", connection).ExecuteReader();
@@ -327,9 +418,10 @@ namespace ExampleServer {
 	/**
 	 * Регистрирует нового пользователя
 	 */
-	class AddUser : APIMethod {
+	class AddUser : APIUserMethod {
 
 		public override object Execute(APIParams paramz, SqlConnection connection) {
+			CheckAuth(paramz, connection);
 
 			if (paramz["password"].Length == 0 || paramz["name"].Length == 0 || paramz["surname"].Length == 0 || paramz["login"].Length == 0 || paramz["status"].Length == 0) {
 				return new APIError("не все поля указаны");
